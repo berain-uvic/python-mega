@@ -1,32 +1,59 @@
+import functions
+import time
+
+now = time.strftime("%b %d, %Y %H:%M:%S")
+print("It is", now)
+
 while True:
     user_action = input("Type add, show, edit, complete, or exit: ")
     user_action = user_action.strip()
 
-    if(user_action == 'add'):
-        todo = input("Enter a todo: ") + "\n"
+    if user_action.startswith('add'):
+        todo = user_action[4:]
 
-        with open('app1/todos.txt', 'r') as file:
-            todos = file.readlines()
+        todos = functions.get_todos('app1/todos.txt')
 
-        todos.append(todo)
+        todos.append(todo + '\n')
 
-        with open('app1/todos.txt', 'w') as file:
-            file.writelines(todos)
+        functions.write_todos(todos)
 
-    elif(user_action == 'show'):
+    elif user_action.startswith('show'):
+        
+        todos = functions.get_todos()
+
         for index, item in enumerate(todos):
+            item = item.strip('\n')
             row = f"{index + 1}-{item}"
             print(row)
 
-    elif(user_action == 'edit'):
-        number = int(input("Number of the todo to edit: "))
-        number = number - 1
-        new_todo = input("Enter new todo: ")
-        todos[number] = new_todo
+    elif user_action.startswith('edit'):
+        try:
+            number = int(user_action[5:])
+            number = number - 1
 
-    elif(user_action == 'complete'):
-        number = int(input("Number of the todo to complete: "))
-        todos.pop(number - 1)
+            todos = functions.get_todos()
+
+            new_todo = input("Enter new todo: ")
+            todos[number] = new_todo + '\n'
+
+            functions.write_todos(todos)
+        except ValueError:
+            print('Your command is not valid')
+            continue
+        
+    elif user_action.startswith('complete'):
+        try:
+            number = int(user_action[9:])
+            
+            todos = functions.get_todos()
+            index = number - 1
+            todo_to_remove = todos[index].strip('\n')
+            todos.pop(index)
+
+            functions.write_todos(todos)
+        except IndexError:
+            print('To-do item does not exist')
+            continue
         
     elif(user_action == 'exit'):
         break
