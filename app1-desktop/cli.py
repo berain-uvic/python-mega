@@ -51,9 +51,16 @@ while True:
             todos.pop(index)
 
             functions.write_todos(todos)
+
+            message = f"Todo {todo_to_remove} was removed from the list."
+            print(message)
         except IndexError:
             print('To-do item does not exist')
             continue
         
-    elif(user_action == 'exit'):
+    elif user_action.startswith('exit'):
         break
+    else:
+        print("Command is not valid.")
+
+print("Bye!")
